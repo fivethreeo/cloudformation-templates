@@ -201,7 +201,7 @@
       }
     },
     "DatabaseInfo": {
-      "Type": "Custom::NetworkInfo",
+      "Type": "Custom::DatabaseInfo",
       "Properties": {
         "ServiceToken": { "Fn::GetAtt" : ["LookupStackOutputs", "Arn"] },
         "StackName": {
