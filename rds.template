@@ -1,0 +1,178 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "CoreOS on EC2: http://coreos.com/docs/running-coreos/cloud-providers/ec2/",
+  "Mappings" : {
+      "RegionMap" : {
+
+          "eu-central-1" : {
+              "AMI" : "ami-04bcbc19"
+          },
+
+          "ap-northeast-1" : {
+              "AMI" : "ami-e09e08e0"
+          },
+
+          "us-gov-west-1" : {
+              "AMI" : "ami-b935579a"
+          },
+
+          "sa-east-1" : {
+              "AMI" : "ami-7735a06a"
+          },
+
+          "ap-southeast-2" : {
+              "AMI" : "ami-bf2e6085"
+          },
+
+          "ap-southeast-1" : {
+              "AMI" : "ami-6c81943e"
+          },
+
+          "us-east-1" : {
+              "AMI" : "ami-3f43355a"
+          },
+
+          "us-west-2" : {
+              "AMI" : "ami-2d98871d"
+          },
+
+          "us-west-1" : {
+              "AMI" : "ami-874b8ec3"
+          },
+
+          "eu-west-1" : {
+              "AMI" : "ami-6195b816"
+          }
+      }
+  },
+  "Parameters": {
+    "CoreOSInstanceType" : {
+      "Description" : "EC2 PV instance type.",
+      "Type" : "String",
+      "Default" : "t1.micro",
+      "AllowedValues" : [
+          "t1.micro",
+          "m1.small",
+          "m1.medium",
+          "m1.large",
+          "m1.xlarge",
+          "m2.xlarge",
+          "m2.2xlarge",
+          "m2.4xlarge",
+          "m3.2xlarge",
+          "c1.medium",
+          "c1.xlarge"
+       ],
+      "ConstraintDescription" : "Must be a valid EC2 PV instance type."
+    },
+    "CoreOSAvailabilityZones": {
+      "Description": "CoreOS availability zones",
+      "Type": "List<AWS::EC2::AvailabilityZone::Name>"
+    },
+    "ELBAvailabilityZones": {
+      "Description": "ELB availability zones",
+      "Type": "List<AWS::EC2::AvailabilityZone::Name>"
+    },
+    "CoreOSAdvertisedIPAddress": {
+      "Description": "Use 'private' if your etcd cluster is within one region or 'public' if it spans regions or cloud providers.",
+      "Default": "private",
+      "AllowedValues": ["private", "public"],
+      "Type": "String"
+    },
+    "CoreOSClusterSize": {
+      "Default": "3",
+      "MinValue": "3",
+      "MaxValue": "12",
+      "Description": "Number of nodes in cluster (3-12).",
+      "Type": "Number"
+    },
+    "CoreOSDiscoveryURL": {
+      "Description": "An unique etcd cluster discovery URL. Grab a new token from https://discovery.etcd.io/new?size=<your cluster size>",
+      "Type": "String"
+    },
+    "CoreOSAdvertisedIPAddress": {
+      "Description": "Use 'private' if your etcd cluster is within one region or 'public' if it spans regions or cloud providers.",
+      "Default": "private",
+      "AllowedValues": ["private", "public"],
+      "Type": "String"
+    },
+    "CoreOSAllowSSHFrom": {
+      "Description": "The net block (CIDR) that SSH is available to.",
+      "Default": "0.0.0.0/0",
+      "Type": "String"
+    },
+    "CoreOSKeyPair" : {
+      "Description" : "The name of an EC2 Key Pair to allow SSH access to the instance.",
+      "Type": "AWS::EC2::KeyPair::KeyName"
+    },
+    "RDSDBEngine" : {
+      "Description" : "RDS database engine.",
+      "Default": "postgres",
+      "Type" : "String"
+    },
+    "RDSDBMultiAZDatabase": {
+      "Default": "true",
+      "Description" : "Create a Multi-AZ MySQL Amazon RDS database instance",
+      "Type": "String",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be either true or false."
+    },
+    "RDSDBName" : {
+      "Description" : "The name of the RDS instance.",
+      "Default": "defaultfornow",
+      "Type" : "String"
+    },
+    "RDSDBAllocatedStorage" : {
+      "Description" : "Allocated storage of the RDS instance..",
+      "Default": "5",
+      "Type" : "Number"
+    },
+    "RDSDBUsername" : {
+      "Description" : "The username of the RDS instance.",
+      "Default": "defaultfornow",
+      "Type" : "String"
+    },
+    "RDSDBPassword" : {
+      "Description" : "The password of the RDS instance.",
+      "Default": "defaultfornow",
+      "Type" : "String"
+    },
+    "RDSDBClass" : {
+      "Description" : "RDS EC2 instance type",
+      "Default": "db.t1.micro",
+      "Type" : "String",
+      "AllowedValues" : [
+        "db.t1.micro",
+        "db.m1.small",
+        "db.m3.medium",
+        "db.m3.large",
+        "db.m3.xlarge",
+        "db.m3.2xlarge",
+        "db.r3.large",
+        "db.r3.xlarge",
+        "db.r3.2xlarge",
+        "db.r3.4xlarge",
+        "db.r3.8xlarge",
+        "db.t2.micro",
+        "db.t2.small",
+        "db.t2.medium",
+        "db.t2.large"
+      ]
+    }
+  },
+  "Resources": {
+    "DBInstance" : {
+       "Type": "AWS::RDS::DBInstance",
+       "Properties": {
+          "DBName"            : { "Ref" : "RDSDBName" },
+          "Engine"            : { "Ref" : "RDSDBEngine" },
+          "MultiAZ" : { "Ref": "RDSDBMultiAZDatabase" },
+          "MasterUsername"    : { "Ref" : "RDSDBUsername" },
+          "DBInstanceClass"   : { "Ref" : "RDSDBClass" },
+          "AllocatedStorage"  : { "Ref" : "RDSDBAllocatedStorage" },
+          "MasterUserPassword": { "Ref" : "RDSDBPassword" }
+       }
+       "DeletionPolicy" : "Snapshot"
+    }
+  }
+}
