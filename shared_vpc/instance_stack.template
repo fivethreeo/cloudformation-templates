@@ -114,13 +114,13 @@
       "Default" : "SampleDatabaseStackName"
     },
     
-    "DatabaseStackName": {
-      "Description": "Name of an active CloudFormation stack that contains the database resources.",
+    "VPCStackname": {
+      "Description": "Name of an active CloudFormation stack that contains the VPC resources.",
       "Type": "String",
       "MinLength" : 1,
       "MaxLength" : 255,
       "AllowedPattern" : "^[a-zA-Z][-a-zA-Z0-9]*$",
-      "Default" : "SampleDatabaseStackName"
+      "Default" : "SampleVPCStackName"
     }
   },
 
