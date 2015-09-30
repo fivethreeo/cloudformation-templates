@@ -89,12 +89,6 @@
       "Description": "An unique etcd cluster discovery URL. Grab a new token from https://discovery.etcd.io/new?size=<your cluster size>",
       "Type": "String"
     },
-    "AdvertisedIPAddress": {
-      "Description": "Use 'private' if your etcd cluster is within one region or 'public' if it spans regions or cloud providers.",
-      "Default": "private",
-      "AllowedValues": ["private", "public"],
-      "Type": "String"
-    },
     "AllowSSHFrom": {
       "Description": "The net block (CIDR) that SSH is available to.",
       "Default": "0.0.0.0/0",
@@ -152,6 +146,17 @@
             "        ExecStop=/usr/bin/docker stop -t 2 redis_server"
             ] ]
           }
+        }
+      }
+    },
+    
+
+    "VPCInfo": {
+      "Type": "Custom::DatabaseInfo",
+      "Properties": {
+        "ServiceToken": { "Fn::GetAtt" : ["LookupStackOutputs", "Arn"] },
+        "StackName": {
+          "Ref": "VPCStackname"
         }
       }
     },
