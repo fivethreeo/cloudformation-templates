@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "A VPC with two public subnets in two AZs",
+  "Description": "A VPC with two routed public subnets in two AZs",
   "Parameters": {
     "PublicZone01": {
       "Description": "ELB availability zone for first public subnet",
