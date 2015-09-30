@@ -57,6 +57,14 @@
       ]
     },
     
+    "LambdaFunctionArn": {
+      "Description": "ARN of lambda functiom arn:aws:iam:*:*:lambda/name",
+      "Type": "String",
+      "MinLength" : 1,
+      "MaxLength" : 255,
+      "Default" : "arn:aws:iam:*:*:lambda/name"
+    },
+    
     "VPCStackname": {
       "Description": "Name of an active CloudFormation stack that contains the VPC resources.",
       "Type": "String",
@@ -64,20 +72,51 @@
       "MaxLength" : 255,
       "AllowedPattern" : "^[a-zA-Z][-a-zA-Z0-9]*$",
       "Default" : "SampleVPCStackName"
+    }
   },
+  
   "Resources": {
+  
+    "DBSubnetGroup" : {
+       "Type" : "AWS::RDS::DBSubnetGroup",
+       "Properties" : {
+          "DBSubnetGroupDescription" : "DBSubnet group for DBInstance",
+          "SubnetIds" : [{ "Fn::GetAtt" : ["VPCInfo", "Subnet1"] }, { "Fn::GetAtt" : ["VPCInfo", "Subnet2"] }]
+        }
+    },
+    
     "DBInstance" : {
        "Type": "AWS::RDS::DBInstance",
        "Properties": {
           "DBName"            : { "Ref" : "Name" },
           "Engine"            : { "Ref" : "Engine" },
           "MultiAZ" : { "Ref": "MultiAZDatabase" },
+          "DBSubnetGroupName":  { "Ref" : "DBSubnetGroup" },
           "MasterUsername"    : { "Ref" : "Username" },
           "DBInstanceClass"   : { "Ref" : "Class" },
           "AllocatedStorage"  : { "Ref" : "AllocatedStorage" },
           "MasterUserPassword": { "Ref" : "Password" }
        },
        "DeletionPolicy" : "Snapshot"
+    },
+    
+
+    "VPCInfo": {
+      "Type": "Custom::DatabaseInfo",
+      "Properties": {
+        "ServiceToken": { "Ref" : "LambdaFunctionArn" },
+        "StackName": {
+          "Ref": "VPCStackname"
+        }
+      }
+    }
+  },
+  "Outputs" : {
+    "EndpointAddress" : {
+        "Value" : { "Fn::GetAtt" : ["DBInstance", "Endpoint.Address"] }
+    },
+    "EndpointPort" : {
+        "Value" : { "Fn::GetAtt" : ["DBInstance", "Endpoint.Port"] }
     }
   }
 }

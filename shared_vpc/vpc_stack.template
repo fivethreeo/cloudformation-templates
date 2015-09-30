@@ -1,7 +1,15 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "CoreOS on EC2: http://coreos.com/docs/running-coreos/cloud-providers/ec2/",
+  "Description": "A VPC with two public subnets in two AZs",
   "Parameters": {
+    "PublicZone01": {
+      "Description": "ELB availability zone for first public subnet",
+      "Type": "AWS::EC2::AvailabilityZone::Name"
+    },
+    "PublicZone02": {
+      "Description": "ELB availability zone for second public subnet",
+      "Type": "AWS::EC2::AvailabilityZone::Name"
+    }
   },
 
   "Resources": {
@@ -18,10 +26,11 @@
       }
     },
 
-    "PublicSubnet" : {
+    "PublicSubnet1" : {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
+        "AvailabilityZone": { "Ref" : "PublicZone01" },
         "CidrBlock" : "10.0.0.0/24",
         "Tags" : [
           {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
@@ -30,6 +39,18 @@
       }
     },
 
+    "PublicSubnet2" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "AvailabilityZone": { "Ref" : "PublicZone02" },
+        "CidrBlock" : "10.0.1.0/24",
+        "Tags" : [
+          {"Key" : "Application", "Value" : { "Ref" : "AWS::StackId"} },
+          {"Key" : "Network", "Value" : "Public" }
+        ]
+      }
+    },
     "InternetGateway" : {
       "Type" : "AWS::EC2::InternetGateway",
       "Properties" : {
@@ -69,10 +90,18 @@
       }
     },
 
-    "PublicSubnetRouteTableAssociation" : {
+    "PublicSubnet1RouteTableAssociation" : {
       "Type" : "AWS::EC2::SubnetRouteTableAssociation",
       "Properties" : {
-        "SubnetId" : { "Ref" : "PublicSubnet" },
+        "SubnetId" : { "Ref" : "PublicSubnet1" },
+        "RouteTableId" : { "Ref" : "PublicRouteTable" }
+      }
+    },
+
+    "PublicSubnet2RouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PublicSubnet2" },
         "RouteTableId" : { "Ref" : "PublicRouteTable" }
       }
     },
@@ -140,12 +169,28 @@
       }
     },
 
-    "PublicSubnetNetworkAclAssociation" : {
+    "PublicSubnet1NetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Ref" : "PublicSubnet" },
+        "SubnetId" : { "Ref" : "PublicSubnet1" },
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
       }
+    },
+
+    "PublicSubnet2NetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PublicSubnet2" },
+        "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
+      }
+    }
+  },
+  "Outputs" : {
+    "Subnet1" : {
+        "Value" : { "Ref" : "PublicSubnet1" }
+    },
+    "Subnet2" : {
+        "Value" : { "Ref" : "PublicSubnet2" }
     }
   }
 }
