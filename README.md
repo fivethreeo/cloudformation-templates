@@ -14,6 +14,13 @@ Create a stack using `rds_stack.template` using  the arn from `lambda_function.t
 
 Create a stack using `instance_stack.template` using  the arn from `lambda_function.template` and the names of the stacks using `vpc_stack.template` and `rds_stack.template`.
 
+Add a EIP (Elastic IP) to the instance and ssh to it using the key added as keypair to the instance.
+
+Run the command:
+```
+  docker run --env-file=/django_env --rm postgres bash -c 'psql -h $DATABASE_ENDPOINT -p $DATABASE_ENDPOINT_PORT'
+```
+
 ## Contributing
 
 1. Fork it!
