@@ -123,9 +123,19 @@
       "Default" : "SampleVPCStackName"
     }
   },
-
+  
   "Resources": {
   
+    "CoreOSServerSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "SSH Security Group",
+        "VpcId" : { "Fn::GetAtt" : ["VPCInfo", "VPCId"] },
+        "SecurityGroupIngress" : [
+          {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22","CidrIp" : {"Ref" : "AllowSSHFrom"}}
+        ]
+      }
+    },
     "CoreOSServerLaunchConfig": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
@@ -133,32 +143,24 @@
         "InstanceType": {"Ref": "InstanceType"},
         "KeyName": {"Ref": "KeyPair"},
         "SubnetId": { "Fn::GetAtt" : ["VPCInfo", "Subnet1"] },
+        "SecurityGroupIds":  { "Ref" : "CoreOSServerSecurityGroup" }, 
         "UserData" : { "Fn::Base64":
           { "Fn::Join": [ "", [
             "#cloud-config\n\n",
-            "coreos:\n",
-            "  units:\n",
-            "    - name: docker-redis.service",
-            "      command: start",
-            "      content: |",
-            "        [Unit]",
-            "        Description=Redis container",  { "Fn::GetAtt" : ["DatabaseInfo", "EndpointAddress"] },  ":", { "Fn::GetAtt" : ["DatabaseInfo", "EndpointAddress"] },
-            "        Author=Me",
-            "        After=docker.service",
-            "    ",
-            "        [Service]",
-            "        Restart=always",
-            "        ExecStart=/usr/bin/docker start -a redis_server",
-            "        ExecStop=/usr/bin/docker stop -t 2 redis_server"
+            "write_files:\n",
+            "  - path: \"/django_env\"\n",
+            "    permissions: \"0644\"\n",
+            "    owner: \"core\"\n",
+            "    content: |\n",
+            "      DATABASE_ENDPOINT=",  { "Fn::GetAtt" : ["DatabaseInfo", "EndpointAddress"] },  ":", { "Fn::GetAtt" : ["DatabaseInfo", "EndpointAddress"] }, "\n"
             ] ]
           }
         }
       }
     },
     
-
     "VPCInfo": {
-      "Type": "Custom::DatabaseInfo",
+      "Type": "Custom::VPCInfo",
       "Properties": {
         "ServiceToken":  { "Ref" : "LambdaFunctionArn" },
         "StackName": {

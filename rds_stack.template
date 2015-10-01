@@ -102,7 +102,7 @@
     
 
     "VPCInfo": {
-      "Type": "Custom::DatabaseInfo",
+      "Type": "Custom::VPCInfo",
       "Properties": {
         "ServiceToken": { "Ref" : "LambdaFunctionArn" },
         "StackName": {
