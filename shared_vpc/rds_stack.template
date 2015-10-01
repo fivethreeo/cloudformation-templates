@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": " RDS db",
+  "Description": "A optionally multi AZ RDS database in two subnets based on the output of a VPC stack with two subnets",
   "Mappings" : {
   },
   "Parameters": {

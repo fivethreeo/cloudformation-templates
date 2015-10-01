@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "CoreOS on EC2: http://coreos.com/docs/running-coreos/cloud-providers/ec2/",
+  "Description": "CoreOS instance in a existing VPC using a existing RDS database based on their stack outputs",
   "Mappings" : {
       "RegionMap" : {
           "eu-central-1" : {
