@@ -77,6 +77,19 @@
   
   "Resources": {
   
+    "DBEC2SecurityGroup": {
+        "Type": "AWS::EC2::SecurityGroup",
+        "Properties" : {
+          "GroupDescription": "Open database for access",
+          "VpcId" : { "Fn::GetAtt" : ["VPCInfo", "VPCId"] },
+          "SecurityGroupIngress" : [{
+            "IpProtocol" : "tcp",
+            "FromPort" : "5432",
+            "ToPort" : "5432"
+          }]
+        }
+      },
+      
     "DBSubnetGroup" : {
        "Type" : "AWS::RDS::DBSubnetGroup",
        "Properties" : {
@@ -91,6 +104,7 @@
           "DBName"            : { "Ref" : "Name" },
           "Engine"            : { "Ref" : "Engine" },
           "MultiAZ" : { "Ref": "MultiAZDatabase" },
+          "VPCSecurityGroups"  : [ { "Fn::GetAtt": [ "DBEC2SecurityGroup", "GroupId" ] } ],
           "DBSubnetGroupName":  { "Ref" : "DBSubnetGroup" },
           "MasterUsername"    : { "Ref" : "Username" },
           "DBInstanceClass"   : { "Ref" : "Class" },

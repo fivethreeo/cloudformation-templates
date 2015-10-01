@@ -143,7 +143,7 @@
         "InstanceType": {"Ref": "InstanceType"},
         "KeyName": {"Ref": "KeyPair"},
         "SubnetId": { "Fn::GetAtt" : ["VPCInfo", "Subnet1"] },
-        "SecurityGroupIds":  { "Ref" : "CoreOSServerSecurityGroup" }, 
+        "SecurityGroupIds":  [{ "Ref" : "CoreOSServerSecurityGroup" }], 
         "UserData" : { "Fn::Base64":
           { "Fn::Join": [ "", [
             "#cloud-config\n\n",
@@ -152,7 +152,7 @@
             "    permissions: \"0644\"\n",
             "    owner: \"core\"\n",
             "    content: |\n",
-            "      DATABASE_ENDPOINT=",  { "Fn::GetAtt" : ["DatabaseInfo", "EndpointAddress"] },  ":", { "Fn::GetAtt" : ["DatabaseInfo", "EndpointAddress"] }, "\n"
+            "      DATABASE_ENDPOINT=",  { "Fn::GetAtt" : ["DatabaseInfo", "EndpointAddress"] },  ":", { "Fn::GetAtt" : ["DatabaseInfo", "EndpointPort"] }, "\n"
             ] ]
           }
         }
