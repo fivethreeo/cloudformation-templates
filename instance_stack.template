@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "CoreOS instance in a existing VPC using a existing RDS database based on their stack outputs",
+  "Description": "CoreOS instance in a existing VPC stack using a existing RDS database stack based on stack outputs",
   "Mappings" : {
       "RegionMap" : {
           "eu-central-1" : {
@@ -142,7 +142,7 @@
         "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]},
         "InstanceType": {"Ref": "InstanceType"},
         "KeyName": {"Ref": "KeyPair"},
-        "SubnetId": { "Fn::GetAtt" : ["VPCInfo", "Subnet1"] },
+        "SubnetId": { "Fn::GetAtt" : ["VPCInfo", "Subnet"] },
         "SecurityGroupIds":  [{ "Ref" : "CoreOSServerSecurityGroup" }], 
         "UserData" : { "Fn::Base64":
           { "Fn::Join": [ "", [

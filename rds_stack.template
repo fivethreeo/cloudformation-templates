@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "A optionally multi AZ RDS database in two subnets based on the output of a VPC stack with two subnets",
+  "Description": "A RDS database based on the output of a VPC stack",
   "Mappings" : {
   },
   "Parameters": {
@@ -8,13 +8,6 @@
       "Description" : "RDS database engine.",
       "Default": "postgres",
       "Type" : "String"
-    },
-    "MultiAZDatabase": {
-      "Default": "true",
-      "Description" : "Create a Multi-AZ MySQL Amazon RDS database instance",
-      "Type": "String",
-      "AllowedValues" : [ "true", "false" ],
-      "ConstraintDescription" : "must be either true or false."
     },
     "Name" : {
       "Description" : "The name of the RDS instance.",
@@ -94,7 +87,7 @@
        "Type" : "AWS::RDS::DBSubnetGroup",
        "Properties" : {
           "DBSubnetGroupDescription" : "DBSubnet group for DBInstance",
-          "SubnetIds" : [{ "Fn::GetAtt" : ["VPCInfo", "Subnet1"] }, { "Fn::GetAtt" : ["VPCInfo", "Subnet2"] }]
+          "SubnetIds" : [{ "Fn::GetAtt" : ["VPCInfo", "Subnet"] }]
         }
     },
     
