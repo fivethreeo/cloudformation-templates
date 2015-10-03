@@ -19,12 +19,12 @@
       "Default": "5",
       "Type" : "Number"
     },
-    "Username" : {
+    "MasterUsername" : {
       "Description" : "The username of the RDS instance.",
       "Default": "commondb",
       "Type" : "String"
     },
-    "Password" : {
+    "MasterPassword" : {
       "Description" : "The password of the RDS instance.",
       "Default": "defaultfornow",
       "Type" : "String"
@@ -105,10 +105,10 @@
           "AvailabilityZone":  { "Ref" : "AvailabilityZone" },
           "VPCSecurityGroups"  : [{ "Ref" : "DBEC2SecurityGroup" }],
           "DBSubnetGroupName":  { "Ref" : "DBSubnetGroup" },
-          "MasterUsername"    : { "Ref" : "Username" },
+          "MasterUsername"    : { "Ref" : "MasterUsername" },
           "DBInstanceClass"   : { "Ref" : "Class" },
           "AllocatedStorage"  : { "Ref" : "AllocatedStorage" },
-          "MasterUserPassword": { "Ref" : "Password" }
+          "MasterUserPassword": { "Ref" : "MasterPassword" }
        },
        "DeletionPolicy" : "Snapshot"
     },
