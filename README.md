@@ -4,7 +4,7 @@ Cloudformation templates for creating a coreos instance using shared stack resou
 
 ## Usage
 
-If you have not added any EC2 keys go to EC2 keypairs and add a new keypair.
+If you have not added any EC2 keypairs go to EC2 keypairs and add a new keypair.
 
 Create a stack using `lambda_role.template`, make a note of the arn in output.
 
