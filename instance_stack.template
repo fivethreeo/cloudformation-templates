@@ -104,7 +104,7 @@
       "Type": "String",
       "MinLength" : 1,
       "MaxLength" : 255,
-      "Default" : "arn:aws:iam:*:*:lambda/name"
+      "Default" : "arn:aws:lambda:eu-west-1:821155534916:function:querystackfunction-LookupStackOutputs-CCR5MGKD4D18"
     },
     
     "DatabaseStackName": {
@@ -112,7 +112,7 @@
       "Type": "String",
       "MinLength" : 1,
       "MaxLength" : 255,
-      "Default" : "SampleDatabaseStackName"
+      "Default" : "commondb"
     },
     
     "VPCStackname": {
@@ -120,7 +120,7 @@
       "Type": "String",
       "MinLength" : 1,
       "MaxLength" : 255,
-      "Default" : "SampleVPCStackName"
+      "Default" : "commonvpc"
     }
   },
   
@@ -152,7 +152,8 @@
             "    permissions: \"0644\"\n",
             "    owner: \"core\"\n",
             "    content: |\n",
-            "      DATABASE_ENDPOINT=",  { "Fn::GetAtt" : ["DatabaseInfo", "EndpointAddress"] },  ":", { "Fn::GetAtt" : ["DatabaseInfo", "EndpointPort"] }, "\n"
+            "      DATABASE_ENDPOINT=",  { "Fn::GetAtt" : ["DatabaseInfo", "EndpointAddress"] },  "\n",
+            "      DATABASE_ENDPOINT_PORT=",  { "Fn::GetAtt" : ["DatabaseInfo", "EndpointPort"] }, "\n"
             ] ]
           }
         }

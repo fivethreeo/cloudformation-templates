@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "A optionally multi AZ RDS database in two subnets based on the output of a VPC stack with two subnets",
+  "Description": "A RDS database in two subnets based on the output of a VPC stack with two subnets",
   "Mappings" : {
   },
   "Parameters": {
@@ -9,16 +9,9 @@
       "Default": "postgres",
       "Type" : "String"
     },
-    "MultiAZDatabase": {
-      "Default": "true",
-      "Description" : "Create a Multi-AZ MySQL Amazon RDS database instance",
-      "Type": "String",
-      "AllowedValues" : [ "true", "false" ],
-      "ConstraintDescription" : "must be either true or false."
-    },
     "Name" : {
       "Description" : "The name of the RDS instance.",
-      "Default": "defaultfornow",
+      "Default": "commondb",
       "Type" : "String"
     },
     "AllocatedStorage" : {
@@ -28,7 +21,7 @@
     },
     "Username" : {
       "Description" : "The username of the RDS instance.",
-      "Default": "defaultfornow",
+      "Default": "commondb",
       "Type" : "String"
     },
     "Password" : {
@@ -62,7 +55,12 @@
       "Type": "String",
       "MinLength" : 1,
       "MaxLength" : 255,
-      "Default" : "arn:aws:iam:*:*:lambda/name"
+      "Default" : "arn:aws:lambda:eu-west-1:821155534916:function:querystackfunction-LookupStackOutputs-CCR5MGKD4D18"
+    },
+    
+    "AvailabilityZone": {
+      "Description": "ELB availability zone for db",
+      "Type": "AWS::EC2::AvailabilityZone::Name"
     },
     
     "VPCStackname": {
@@ -71,7 +69,7 @@
       "MinLength" : 1,
       "MaxLength" : 255,
       "AllowedPattern" : "^[a-zA-Z][-a-zA-Z0-9]*$",
-      "Default" : "SampleVPCStackName"
+      "Default" : "commonvpc"
     }
   },
   
@@ -85,7 +83,8 @@
           "SecurityGroupIngress" : [{
             "IpProtocol" : "tcp",
             "FromPort" : "5432",
-            "ToPort" : "5432"
+            "ToPort" : "5432",
+            "CidrIp" :"10.0.0.0/24"
           }]
         }
       },
@@ -103,8 +102,8 @@
        "Properties": {
           "DBName"            : { "Ref" : "Name" },
           "Engine"            : { "Ref" : "Engine" },
-          "MultiAZ" : { "Ref": "MultiAZDatabase" },
-          "VPCSecurityGroups"  : [ { "Fn::GetAtt": [ "DBEC2SecurityGroup", "GroupId" ] } ],
+          "AvailabilityZone":  { "Ref" : "AvailabilityZone" },
+          "VPCSecurityGroups"  : [{ "Ref" : "DBEC2SecurityGroup" }],
           "DBSubnetGroupName":  { "Ref" : "DBSubnetGroup" },
           "MasterUsername"    : { "Ref" : "Username" },
           "DBInstanceClass"   : { "Ref" : "Class" },
