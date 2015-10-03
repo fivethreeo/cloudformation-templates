@@ -1,4 +1,4 @@
-# cloudformation-templates
+# simple-coreos-cloudformation
 
 Cloudformation templates for creating a coreos instance using shared stack resources on aws
 
