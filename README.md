@@ -19,7 +19,7 @@ Add a EIP (Elastic IP) to the instance and ssh to it using the key added as keyp
 Run this command using master database, user and password:
 ```
   docker run --env-file=/django_env -it --rm postgres \
-      bash -c 'psql -h $DATABASE_ENDPOINT -p $DATABASE_ENDPOINT_PORT -U masterdb -W'
+      bash -c 'psql -h $DATABASE_ENDPOINT -p $DATABASE_ENDPOINT_PORT -U masteruser -W'
 ```
 
 ## Contributing
