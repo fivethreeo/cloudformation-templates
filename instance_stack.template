@@ -107,6 +107,31 @@
       "Default" : "arn:aws:lambda:eu-west-1:821155534916:function:querystackfunction-LookupStackOutputs-CCR5MGKD4D18"
     },
     
+    "DatabaseName": {
+      "Description": "Name of the database this instance connects to.",
+      "Type": "String",
+      "MinLength" : 1,
+      "MaxLength" : 255,
+      "Default" : "instancedbname"
+    },
+    
+    "DatabaseUser": {
+      "Description": "Username for this instance in the RDS database.",
+      "Type": "String",
+      "MinLength" : 1,
+      "MaxLength" : 255,
+      "Default" : "instancedbuser"
+    },
+    
+    
+    "DatabasePassword": {
+      "Description": "Password for this instance in the RDS database.",
+      "Type": "String",
+      "MinLength" : 8,
+      "MaxLength" : 255,
+      "Default" : "instancedbpassword"
+    },
+    
     "DatabaseStackName": {
       "Description": "Name of an active CloudFormation stack that contains the database resources.",
       "Type": "String",
@@ -148,12 +173,19 @@
           { "Fn::Join": [ "", [
             "#cloud-config\n\n",
             "write_files:\n",
-            "  - path: \"/django_env\"\n",
+            "  - path: \"/docker_env\"\n",
             "    permissions: \"0644\"\n",
             "    owner: \"core\"\n",
             "    content: |\n",
-            "      DATABASE_ENDPOINT=",  { "Fn::GetAtt" : ["DatabaseInfo", "EndpointAddress"] },  "\n",
-            "      DATABASE_ENDPOINT_PORT=",  { "Fn::GetAtt" : ["DatabaseInfo", "EndpointPort"] }, "\n"
+            "      DATABASE_ENDPOINT=", { "Fn::GetAtt" : ["DatabaseInfo", "EndpointAddress"] },  "\n",
+            "      DATABASE_ENDPOINT_PORT=", { "Fn::GetAtt" : ["DatabaseInfo", "EndpointPort"] }, "\n",
+            "      DATABASE_USERNAME=", { "Ref" : "DatabaseUser" }, "\n",
+            "      DATABASE_PASSWORD=", { "Ref" : "DatabasePassword" }, "\n",
+            "      DATABASE_NAME=", { "Ref" : "DatabaseName" }, "\n",
+            "      DATABASE_URL=postgres://", { "Ref" : "DatabaseUser" }, ":", { "Ref" : "DatabasePassword" }, "@",
+                   { "Fn::GetAtt" : ["DatabaseInfo", "EndpointAddress"] }, ":", { "Fn::GetAtt" : ["DatabaseInfo", "EndpointPort"] }, "/",
+                   { "Ref" : "DatabaseName" },
+            "\n"
             ] ]
           }
         }

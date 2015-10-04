@@ -19,9 +19,16 @@ Create a stack using `instance_stack.template` using  the arn from `lambda_funct
 Add a EIP (Elastic IP) to the instance and ssh to it using the key added as keypair to the instance.
 
 Run this command using master database, user and password:
+
 ```
-  docker run --env-file=/django_env -it --rm postgres \
-      bash -c 'psql -h $DATABASE_ENDPOINT -p $DATABASE_ENDPOINT_PORT -U masteruser -W'
+  docker run --env-file=/docker_env -it --rm postgres \
+      bash -c 'createuser $DATABASE_USERNAME -S -R -d -h $DATABASE_ENDPOINT -p $DATABASE_ENDPOINT_PORT -U commondb -W -P'
+      
+  docker run --env-file=/docker_env -it --rm postgres \
+      bash -c 'createdb $DATABASE_NAME -O $DATABASE_USERNAME -h $DATABASE_ENDPOINT -p $DATABASE_ENDPOINT_PORT -U $DATABASE_USERNAME -W'
+      
+  docker run --env-file=/docker_env -it --rm postgres \
+      bash -c 'psql -h $DATABASE_ENDPOINT -p $DATABASE_ENDPOINT_PORT -W $DATABASE_NAME $DATABASE_USERNAME'
 ```
 
 ## Contributing
